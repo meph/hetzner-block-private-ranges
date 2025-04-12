@@ -70,9 +70,10 @@ elif command -v iptables-save &> /dev/null; then
     echo "Saving rules using iptables-save (requires iptables-persistent package)..."
     # Ensure the target directory exists
     sudo mkdir -p /etc/iptables
-    sudo iptables-save > /etc/iptables/rules.v4
-    # If using IPv6, uncomment the following line:
-    # sudo ip6tables-save > /etc/iptables/rules.v6
+    # Use sudo bash -c to handle redirection with root privileges
+    sudo bash -c 'iptables-save > /etc/iptables/rules.v4'
+    # If using IPv6, uncomment the following line (also needs sudo bash -c):
+    # sudo bash -c 'ip6tables-save > /etc/iptables/rules.v6'
 else
     echo "WARNING: Could not find netfilter-persistent or iptables-save."
     echo "Please install iptables-persistent and save the rules manually."
