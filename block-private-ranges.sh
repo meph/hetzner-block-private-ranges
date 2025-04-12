@@ -69,11 +69,21 @@ if command -v netfilter-persistent &> /dev/null; then
 elif command -v iptables-save &> /dev/null; then
     echo "Saving rules using iptables-save (requires iptables-persistent package)..."
     # Ensure the target directory exists
+    echo "Attempting to create /etc/iptables..."
     sudo mkdir -p /etc/iptables
-    # Use sudo bash -c to handle redirection with root privileges
-    sudo bash -c 'iptables-save > /etc/iptables/rules.v4'
-    # If using IPv6, uncomment the following line (also needs sudo bash -c):
-    # sudo bash -c 'ip6tables-save > /etc/iptables/rules.v6'
+    echo "Checking directory status:"
+    sudo ls -ld /etc/iptables || echo "Directory /etc/iptables still does not exist or is inaccessible."
+    # Use tee with sudo to handle writing the file with root privileges
+    echo "Attempting to save rules to /etc/iptables/rules.v4..."
+    sudo iptables-save | sudo tee /etc/iptables/rules.v4 > /dev/null
+    # Check if file was created
+    if sudo test -f /etc/iptables/rules.v4; then
+        echo "File /etc/iptables/rules.v4 created successfully."
+    else
+        echo "ERROR: Failed to create /etc/iptables/rules.v4."
+    fi
+    # If using IPv6, uncomment the following lines (also needs sudo tee):
+    # sudo ip6tables-save | sudo tee /etc/iptables/rules.v6 > /dev/null
 else
     echo "WARNING: Could not find netfilter-persistent or iptables-save."
     echo "Please install iptables-persistent and save the rules manually."
