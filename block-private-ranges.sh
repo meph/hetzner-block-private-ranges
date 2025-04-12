@@ -68,6 +68,8 @@ if command -v netfilter-persistent &> /dev/null; then
     sudo netfilter-persistent save
 elif command -v iptables-save &> /dev/null; then
     echo "Saving rules using iptables-save (requires iptables-persistent package)..."
+    # Ensure the target directory exists
+    sudo mkdir -p /etc/iptables
     sudo iptables-save > /etc/iptables/rules.v4
     # If using IPv6, uncomment the following line:
     # sudo ip6tables-save > /etc/iptables/rules.v6
